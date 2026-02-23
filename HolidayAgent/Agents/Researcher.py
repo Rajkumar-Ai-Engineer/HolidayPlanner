@@ -4,9 +4,9 @@ import sys
 from autogen_agentchat.agents import AssistantAgent
 from autogen_ext.models.openai import OpenAIChatCompletionClient
 from HolidayAgent.utils import load_txt
-from HolidayAgent.Tools.GoogleMap import google_map_tool
-from HolidayAgent.Tools.SerperTool import serper_tool
-from HolidayAgent.Tools.TavilyTool import tavily_tool
+from HolidayAgent.tools.GoogleMap import google_map_tool
+from HolidayAgent.tools.SerperTool import serper_tool
+from HolidayAgent.tools.TavilyTool import tavily_tool
 from HolidayAgent.config import MODEL_CONFIG, get_api_key, PROMPTS_DIR
 
 class HolidayResearcherAgent():
@@ -27,4 +27,4 @@ class HolidayResearcherAgent():
             )
         except Exception as e:
             logging.error(f"Error in creating researcher agent: {str(e)}")
-            raise HolidayAgentException(e, sys)
+            raise HolidayAgentException(str(e), sys)

@@ -4,6 +4,8 @@ import sys
 import os 
 import googlemaps
 from datetime import datetime
+from dotenv import load_dotenv
+load_dotenv()
 
 def google_map_tool(source: str, destination: str):
     """ Google Map tool to get distance and duration between source and destination."""

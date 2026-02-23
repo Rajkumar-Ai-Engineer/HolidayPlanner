@@ -13,9 +13,14 @@ Rules:
 - Do not generate large markdown tables.
 - Do not hallucinate by saying wrong things
 
-Output format:
-    Trip place:
-    plan - 
-    Hotel recommendations:
-    Budget for each things
+output format:
+Destination: [City Name]
+Duration: [Number of Days]
+Accommodation:
+- Budget: [Hotel Name] - Approx. $[Price Range] per night
+- Mid: [Hotel Name] - Approx. $[Price Range] per night
+- Luxury: [Hotel Name] - Approx. $[Price Range] per night
+plan:[Itinerary]
+
+**In output each section include corresponding emoji's to make it as good itinerary**
 

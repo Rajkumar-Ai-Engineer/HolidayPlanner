@@ -2,8 +2,8 @@ from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
-from HolidayAgent.Agents.Planner import HolidayPlannerAgent
-from HolidayAgent.Agents.Researcher import HolidayResearcherAgent
+from HolidayAgent.agents.planner import HolidayPlannerAgent
+from HolidayAgent.agents.researcher import HolidayResearcherAgent
 from autogen_agentchat.teams import RoundRobinGroupChat
 from autogen_agentchat.conditions import TextMentionTermination
 import asyncio
@@ -13,7 +13,9 @@ app = FastAPI(title="Holiday Trip Planner")
 class TripRequest(BaseModel):
     destination: str
     days: int
+    source: str
     budget: int
+    
 
 @app.get("/", response_class=HTMLResponse)
 async def home():
@@ -52,6 +54,10 @@ async def home():
                     <input type="number" id="days" min="1" max="30" placeholder="e.g., 3" required>
                 </div>
                 <div class="form-group">
+                    <label>Source</label>
+                    <input type="text" id="source" placeholder="e.g., Chennai, Bangalore" required>
+                </div>
+                <div class="form-group">
                     <label>Budget (₹)</label>
                     <input type="number" id="budget" min="1000" placeholder="e.g., 50000" required>
                 </div>
@@ -68,6 +74,7 @@ async def home():
                 
                 const destination = document.getElementById('destination').value;
                 const days = document.getElementById('days').value;
+                const source = document.getElementById('source').value;
                 const budget = document.getElementById('budget').value;
                 const loading = document.getElementById('loading');
                 const result = document.getElementById('result');
@@ -83,7 +90,7 @@ async def home():
                     const response = await fetch('/plan-trip', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ destination, days: parseInt(days), budget: parseInt(budget) })
+                        body: JSON.stringify({ destination, days: parseInt(days), budget: parseInt(budget), source })
                     });
                     
                     const data = await response.json();
@@ -117,12 +124,18 @@ async def plan_trip(request: TripRequest):
         termination = TextMentionTermination("APPROVE")
         team = RoundRobinGroupChat(
             [planner.plan_trip(), researcher.research_destinations()], 
-            termination_condition=termination, 
-            max_turns=4
+            termination_condition=termination,
+            
         )
         
-        task = f"I want a {request.days} day trip to {request.destination} with a budget of ₹{request.budget}. Can you help me plan it?"
+        task = f"I want a {request.days} day trip to {request.destination} with a budget of ₹{request.budget} from {request.source}. Can you help me plan it?"
         response = await team.run(task=task)
+        
+        
+        if hasattr(response, 'messages') and response.messages:
+            final_message = response.messages[-2]
+            if hasattr(final_message, 'content'):
+                return {"plan": final_message.content}
         
         return {"plan": str(response)}
     except Exception as e:
