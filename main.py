@@ -1,5 +1,5 @@
-from HolidayAgent.Agents.Planner import HolidayPlannerAgent
-from HolidayAgent.Agents.Researcher import HolidayResearcherAgent
+from HolidayAgent.agents.planner import HolidayPlannerAgent
+from HolidayAgent.agents.researcher import HolidayResearcherAgent
 from autogen_agentchat.teams import RoundRobinGroupChat
 from autogen_agentchat.conditions import TextMentionTermination
 import asyncio

@@ -23,4 +23,5 @@ Accommodation:
 plan:[Itinerary]
 
 **In output each section include corresponding emoji's to make it as good itinerary**
+**Note:Must follow the output format as well as like wow experience formatting and guiding**
 
