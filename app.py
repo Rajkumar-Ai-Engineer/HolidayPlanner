@@ -5,6 +5,9 @@ from HolidayAgent.agents.planner import HolidayPlannerAgent
 from HolidayAgent.agents.researcher import HolidayResearcherAgent
 from autogen_agentchat.teams import RoundRobinGroupChat
 from autogen_agentchat.conditions import TextMentionTermination
+from typing_extensions import Literal
+from pydantic import Field
+
 
 app = FastAPI(title="Holiday Trip Planner")
 
@@ -14,6 +17,7 @@ class TripRequest(BaseModel):
     source: str
     people: int
     budget: int
+    
 
 @app.get("/", response_class=HTMLResponse)
 async def home():
@@ -100,10 +104,13 @@ async def home():
                 console.log('Received data:', data);
                 
                 if (response.ok) {
-                    const planText = typeof data.plan === 'string' ? data.plan : JSON.stringify(data.plan, null, 2);
+                    const planText = typeof data.plan === 'string' 
+                    ? data.plan 
+                    : JSON.stringify(data.plan, null, 2);
+
                     result.textContent = planText;
                     result.style.display = 'block';
-                } else {
+                }               else {
                     error.textContent = data.detail || 'Error planning trip';
                     error.style.display = 'block';
                 }
@@ -139,8 +146,9 @@ async def plan_trip(request: TripRequest):
             final_message = response.messages[-2] if len(response.messages) > 1 else response.messages[-1]
             if hasattr(final_message, 'content'):
                 return {"plan": final_message.content}
+            
         
-        return {"plan": str(response)}
+        return {"plan":response}
     except Exception as e:
         import traceback
         print(f"Error: {str(e)}")
