@@ -5,9 +5,6 @@ from HolidayAgent.agents.planner import HolidayPlannerAgent
 from HolidayAgent.agents.researcher import HolidayResearcherAgent
 from autogen_agentchat.teams import RoundRobinGroupChat
 from autogen_agentchat.conditions import TextMentionTermination
-from typing_extensions import Literal
-from pydantic import Field
-
 
 app = FastAPI(title="Holiday Trip Planner")
 
@@ -17,6 +14,7 @@ class TripRequest(BaseModel):
     source: str
     people: int
     budget: int
+    extra_info: str = None
     
 
 @app.get("/", response_class=HTMLResponse)
@@ -67,6 +65,10 @@ async def home():
                 <label>Budget (INR)</label>
                 <input type="number" id="budget" min="1000" placeholder="e.g., 50000" required>
             </div>
+            <div class="form-group">
+                <label>Extra Information</label>
+                <input type="text" id="extra_info" placeholder="Any specific preferences or requirements?">
+            </div>
             <button type="submit">Plan My Trip</button>
         </form>
         <div class="loading" id="loading">Planning your trip... This may take a minute</div>
@@ -83,6 +85,7 @@ async def home():
             const source = document.getElementById('source').value;
             const people = parseInt(document.getElementById('people').value);
             const budget = parseInt(document.getElementById('budget').value);
+            const extra_info = document.getElementById('extra_info').value;
             const loading = document.getElementById('loading');
             const result = document.getElementById('result');
             const error = document.getElementById('error');
@@ -97,7 +100,7 @@ async def home():
                 const response = await fetch('/plan-trip', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ destination, days, budget, source, people })
+                    body: JSON.stringify({ destination, days, budget, source, people, extra_info })
                 });
                 
                 const data = await response.json();
@@ -139,7 +142,7 @@ async def plan_trip(request: TripRequest):
             termination_condition=termination,
         )
         
-        task = f"I want a {request.days} day trip to {request.destination} with a budget of Rs.{request.budget} from {request.source} for {request.people} people. Can you help me plan it?"
+        task = f"I want a {request.days} day trip to {request.destination} with a budget of Rs.{request.budget} from {request.source} for {request.people} people and extra info: {request.extra_info}. Can you help me plan it?"
         response = await team.run(task=task)
         
         if hasattr(response, 'messages') and response.messages:
