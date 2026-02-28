@@ -5,11 +5,9 @@ openai
 ipykernel
 autogen
 autogen_ext
-dataclasses
 googlemaps
 tavily
 langchain-tavily
 langchain_community
 fastapi
 uvicorn
--e .
