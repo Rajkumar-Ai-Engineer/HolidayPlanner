@@ -20,6 +20,11 @@ dependencies = [
     "tavily>=1.1.0",
     "uvicorn>=0.41.0",
 ]
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
 [tool.setuptools.packages.find]
-include= ["HolidayAgent*"]
-exclude=["logs*","Notebooks*"]
+include = ["HolidayAgent*"]
+exclude = ["logs*", "Notebooks*"]
